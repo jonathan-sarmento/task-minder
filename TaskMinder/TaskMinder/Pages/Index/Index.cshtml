@@ -1,0 +1,126 @@
+﻿@page "~/"
+@model TaskMinder.Pages.Index.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@section styles {
+    <abp-style src="/Pages/Index/Index.cshtml.css" />
+}
+@section scripts {
+    <abp-script src="/Pages/Index/Index.cshtml.js" />
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.13/dist/css/uikit.min.css" />
+
+<!-- UIkit JS -->
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.13/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.16.13/dist/js/uikit-icons.min.js"></script>
+
+<div class="container">
+    <abp-card>
+        <abp-card-header>
+            @Html.AntiForgeryToken()
+            <abp-card-title>
+                TODO LIST
+            </abp-card-title>
+        </abp-card-header>
+        <abp-card-body>
+            <!-- FORM FOR NEW TODO ITEMS  Doc: https://docs.abp.io/en/abp/latest/UI/AspNetCore/Tag-Helpers/Index-->
+            
+            
+            <div class="w-25 p-3 border border-primary rounded uk-padding-remove-bottom">
+            <ul uk-accordion>
+                <li>
+                    <a class="uk-accordion-title" data-testid="accordion-button" href="#">New todo item</a>
+                    <div class="uk-accordion-content">
+                            <form id="NewItemForm" class="row  g-3 align-items-center" method="post" data-testid="create-form">
+                                <div class="col-12">
+                                    <label asp-for="TodoItem!.Title" class="form-label">Title</label>
+                                    <div class="input-group">
+                                        <input asp-for="TodoItem!.Title" data-testid="title-input" type="text" class="form-control" placeholder="enter text..." autocomplete="off">
+                                    </div>
+                                    <span asp-validation-for="TodoItem!.Title" class="text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <label asp-for="TodoItem!.Description" class="form-label">Description</label>
+                                    <div class="input-group">
+                                        <textarea asp-for="TodoItem!.Description" data-testid="description-input" type="text" class="form-control" placeholder="enter text..." style="max-height: 200px;"></textarea>
+                                    </div>
+                                    <span asp-validation-for="TodoItem!.Description" class="text-danger"></span>
+                                </div>
+                                <div class="col-12">
+                                    <abp-button button-type="Primary" data-testid="submit-button" type="submit">Submit</abp-button>
+                                </div>
+                            </form>
+                    </div>
+                </li>
+            </ul>
+            </div>
+            <!-- TODO ITEMS LIST -->
+            <ul id="TodoList" class="uk-padding-remove-left" style="list-style-type: none;">
+                <li>
+                    @foreach (var todoItem in Model.TodoItems.Where(x => !x.Done).ToList())
+                    {
+                        <div data-testid="todo-item" class="card-todo uk-card uk-card-default uk-card-hover uk-visible-toggle uk-card-body uk-height-1-1 uk-margin-bottom uk-padding-remove-bottom uk-flex uk-flex-row uk-flex-middle" @(todoItem.Done ? "style=opacity"+":0.5;" + " disabled" : "")>
+                            @if (todoItem.Done)
+                            {
+                                <button type="button" title="Uncheck" class="uk-icon-button uk-margin-large-right uk-margin-large-bottom" uk-icon="check" abp-border="Primary" data-check="UncheckButton" data-todoid="@todoItem.Id"></button>
+                            }
+                            else
+                            {
+                                <button type="button" title="Check" class="uk-icon-button uk-margin-large-right uk-margin-large-bottom" abp-border="Primary" data-check="CheckButton" data-todoid="@todoItem.Id"></button>
+                            }
+
+                            <div class="card-container uk-flex-auto">
+                                <div class="uk-card-badge uk-label">Category</div>
+                                <h3 class="uk-card-title" @(todoItem.Done ? "style=text-decoration"+":line-through;text-decoration-width"+":2px" : "")>@todoItem.Title</h3>
+                                <p>@todoItem.Description</p>
+
+                                <ul class="uk-hidden-hover uk-iconnav uk-align-right">
+                                    <li><a data-testid="delete-button" data-modal="OpenDeleteModal" data-todoid="@todoItem.Id" href="javascript:void(0)" uk-icon="icon: trash" class="uk-align-right"></a><a data-testid="update-button" data-modal="OpenUpdateModal" data-todoid="@todoItem.Id" href="javascript:void(0)" uk-icon="icon: pencil" class="uk-align-right"></a></li>
+                                </ul>
+                                <div class="uk-card-footer uk-align-left uk-padding-remove-left uk-margin-remove">
+                                    <p class="uk-text-meta uk-align-left uk-margin-top">Created on: <time>@($"{todoItem.CreatedDate:dd/MM/yyyy HH:mm}")</time></p>
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+                </li>
+            </ul>
+            <ul id="TodoCompletedList" uk-accordion>
+                <li class="uk-open">
+                    <a class="uk-accordion-title uk-width-1-6" href="#">Completed Tasks</a>
+                    <div class="uk-accordion-content">
+                        @foreach (var todoItem in Model.TodoItems.Where(x => x.Done).OrderByDescending(x => x.CompletedDate).ToList())
+                        {
+                            <div data-testid="todo-item" class="card-todo uk-card uk-card-default uk-card-hover uk-visible-toggle uk-card-body uk-height-1-1 uk-margin-bottom uk-padding-remove-bottom uk-flex uk-flex-row uk-flex-middle" @(todoItem.Done ? "style=opacity"+":0.5;" + " disabled" : "")>
+                                @if (todoItem.Done)
+                                {
+                                    <button type="button" title="Uncheck" class="uk-icon-button uk-margin-large-right uk-margin-large-bottom" uk-icon="check" abp-border="Primary" data-check="UncheckButton" data-todoid="@todoItem.Id"></button>
+                                }
+                                else
+                                {
+                                    <button type="button" title="Check" class="uk-icon-button uk-margin-large-right uk-margin-large-bottom" abp-border="Primary" data-check="CheckButton" data-todoid="@todoItem.Id"></button>
+                                }
+
+                                <div class="card-container uk-flex-auto">
+                                    <div class="uk-card-badge uk-label">Category</div>
+                                    <h3 class="uk-card-title" @(todoItem.Done ? "style=text-decoration"+":line-through;text-decoration-width"+":2px" : "")>@todoItem.Title</h3>
+                                    <p>@todoItem.Description</p>
+
+                                    <ul class="uk-hidden-hover uk-iconnav uk-align-right">
+                                        <li><a data-testid="delete-button" data-modal="OpenDeleteModal" data-todoid="@todoItem.Id" href="javascript:void(0)" uk-icon="icon: trash" class="uk-align-right"></a><a data-testid="update-button" data-modal="OpenUpdateModal" data-todoid="@todoItem.Id" href="javascript:void(0)" uk-icon="icon: pencil" class="uk-align-right"></a></li>
+                                    </ul>
+                                    <div class="uk-card-footer uk-align-left uk-padding-remove-left uk-margin-remove">
+                                        <p class="uk-text-meta uk-align-left uk-margin-top">Completed on: <time>@($"{todoItem.CompletedDate:dd/MM/yyyy HH:mm}")</time></p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                </li>
+            </ul>
+        </abp-card-body>
+    </abp-card>
+</div>

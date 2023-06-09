@@ -1,0 +1,17 @@
+﻿@page
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model TaskMinder.Pages.Index.TodoDeleteModalModel
+@{
+    Layout = null;
+}
+<form data-testid="delete-modal"  method="post" action="@Url.Page("/Index/TodoDeleteModal")">
+    <abp-modal>
+        <abp-modal-header title="Delete Todo item"></abp-modal-header>
+        <abp-modal-body>
+            @Html.HiddenFor(model => Model.TodoId)
+            @Html.AntiForgeryToken()
+            <label>Are you sure?</label>
+        </abp-modal-body>
+        <abp-modal-footer data-testid="submit-buttons" buttons="@AbpModalButtons.Save | @AbpModalButtons.Cancel"></abp-modal-footer>
+    </abp-modal>
+</form>

@@ -1,0 +1,19 @@
+﻿@page
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model TaskMinder.Pages.Index.TodoUpdateModalModel
+@{
+    Layout = null;
+}
+<form data-testid="update-modal" method="post" action="@Url.Page("/Index/TodoUpdateModal")">
+    <abp-modal>
+        <abp-modal-header title="Update Todo item"></abp-modal-header>
+        <abp-modal-body>
+            @Html.AntiForgeryToken()
+            <abp-input asp-for="TodoItem.Id" />
+            <abp-input asp-for="TodoItem.Title" />
+            <abp-input asp-for="TodoItem.Description" />
+            <abp-input asp-for="TodoItem.Done" />
+        </abp-modal-body>
+        <abp-modal-footer data-testid="submit-buttons" buttons="@AbpModalButtons.Save | @AbpModalButtons.Cancel"></abp-modal-footer>
+    </abp-modal>
+</form>

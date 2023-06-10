@@ -45,3 +45,4 @@ Após isso, inicie a aplicação
 ```
 dotnet run
 ```
+Em seguida crie uma conta ou se preferir faça login como usuário administrador (admin é o username e 1q2w3E* é a senha)

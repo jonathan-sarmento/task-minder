@@ -23,15 +23,8 @@ Task Minder é um simples site de lista de tarefas, é uma ferramenta que permit
 ## Rodando o projeto localmente
 
 Clone o projeto
-
 ```bash
   git clone https://github.com/jonathan-sarmento/task-minder.git
-```
-
-Entre no diretório do projeto principal e o abra na sua IDE
-
-```bash
-  cd task-minder/TaskMinder
 ```
 
 Defina a Connection String do seu banco Postgres no arquivo `appsettings.json`  
@@ -41,12 +34,11 @@ Defina a Connection String do seu banco Postgres no arquivo `appsettings.json`
   } 
   ```
 
-Rode o comando da migração inicial para criar as tabelas no banco de dados (Necessário ter o CLI do Entity Framework instalado)
-
+Abra o terminal no diretório onde está o arquivo `.csproj` e rode o comando da migração inicial para criar as tabelas no banco de dados (Necessário ter o CLI do Entity Framework instalado)
 ```
 dotnet ef database update
-
 ```
+
 Depois de criado as tabelas, é necessário excutar alguns comandos extras. Execute os comandos SQL do arquivo `extra.sql` no seu BD para finalizar as configurações das tabelas.
 
 Após isso, inicie a aplicação

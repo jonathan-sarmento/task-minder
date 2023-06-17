@@ -6,7 +6,6 @@ using TaskMinder.Localization;
 using TaskMinder.Menus;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
-using Volo.Abp.Uow;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Mvc;
@@ -49,7 +48,8 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 
 namespace TaskMinder;
 
@@ -139,6 +139,7 @@ public class TaskMinderModule : AbpModule
             context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
         }
 
+        ConfigureAntiforgeryTokenValidation(context);
         ConfigureAuthentication(context);
         ConfigureMultiTenancy();
         ConfigureUrls(configuration);
@@ -150,6 +151,28 @@ public class TaskMinderModule : AbpModule
         ConfigureVirtualFiles(hostingEnvironment);
         ConfigureLocalization();
         ConfigureEfCore(context);
+    }
+
+    private void ConfigureAntiforgeryTokenValidation(ServiceConfigurationContext context, bool autoValidate = true)
+    {
+        /* Antiforgery tokens validation is already added to the global filters. If you want disable, set autoValidate false.
+         * doc: https://docs.abp.io/en/abp/latest/CSRF-Anti-Forgery
+         */
+        if (!autoValidate)
+        {
+            Configure<AbpAntiForgeryOptions>(options =>
+            {
+                options.AutoValidate = false;
+            });
+
+            context.Services
+                .AddRazorPages()
+                .AddRazorPagesOptions(options =>
+                {
+                    options.Conventions
+                           .ConfigureFilter(new IgnoreAntiforgeryTokenAttribute());
+                });
+        }
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)

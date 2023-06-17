@@ -11,9 +11,7 @@ using Volo.Abp.Users;
 
 namespace TaskMinder.Services;
 
-//[ExposeServices(typeof(ITodoService))]
 [Authorize]
-[IgnoreAntiforgeryToken]
 public class TodoService : ApplicationService, ITodoService, ITransientDependency
 {
     private readonly ICurrentUser _currentUser;
@@ -69,6 +67,7 @@ public class TodoService : ApplicationService, ITodoService, ITransientDependenc
         await _todoItemRepository.UpdateAsync(todo);
     }
 
+    [IgnoreAntiforgeryToken]
     public async Task UpdateDoneStatusAsync(Guid id, bool done)
     {
         var todo = await _todoItemRepository.GetAsync(x => x.Id.Equals(id));

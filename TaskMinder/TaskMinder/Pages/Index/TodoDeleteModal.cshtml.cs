@@ -4,7 +4,6 @@ using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 
 namespace TaskMinder.Pages.Index
 {
-    [ValidateAntiForgeryToken]
     public class TodoDeleteModalModel : AbpPageModel
     {
         private readonly ITodoService _todoService;
